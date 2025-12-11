@@ -42,3 +42,6 @@ Thumbs.db
 .env
 config.json
 
+# Downloaded images
+spx-realtime-aws/
+
