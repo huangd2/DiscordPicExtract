@@ -44,4 +44,5 @@ config.json
 
 # Downloaded images
 spx-realtime-aws/
+spx-realtime-aws-clean/
 

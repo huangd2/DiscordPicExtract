@@ -140,17 +140,122 @@ You can modify default settings in `config.py`:
 - Verify the channel ID/name is correct
 - Check that you have permission to view the channel
 
+## Duplicate Image Detection
+
+The project includes a deduplication tool (`deduplicate_images.py`) to identify and remove duplicate images from downloaded collections.
+
+### Features
+
+- **Content-based duplicate detection**: Uses perceptual hashing (pHash) to identify visually identical images
+- **Date-restricted comparison**: Only compares images from the same date to avoid false positives
+- **File size verification**: Combines hash and file size to ensure accurate duplicate detection
+- **Timestamp analysis**: Provides detailed statistics on duplicate patterns
+
+### Usage
+
+```bash
+python deduplicate_images.py --source spx-realtime-aws --output spx-realtime-aws-clean
+```
+
+**Arguments:**
+- `--source`: Source directory containing images (default: `spx-realtime-aws`)
+- `--output`: Output directory for unique images (default: `spx-realtime-aws-clean`)
+
+### Duplicate Detection Logic
+
+The deduplication algorithm uses a two-stage approach:
+
+1. **Date Grouping**: Images are first grouped by date (extracted from filename format `YYYY-MM-DD_HH-MM-SS_...`)
+   - Only images from the same date are compared
+   - This prevents false positives where different images from different dates might have similar content
+
+2. **Duplicate Identification**: Within each date group, duplicates are identified using:
+   - **Perceptual Hash (pHash)**: Calculates a hash based on image content
+   - **File Size**: Additional verification to ensure files are truly identical
+   - Files are considered duplicates only if they have **both** the same hash **and** the same file size
+
+3. **Selection Strategy**: For each duplicate group, the file with the earliest timestamp is kept, and all others are marked for removal.
+
+### Output Statistics
+
+The script provides comprehensive statistics:
+
+#### Deduplication Summary
+- Total images scanned
+- Unique images copied
+- Duplicates skipped
+- Number of duplicate groups found
+
+#### Timestamp Difference Statistics
+
+For quality checking purposes, the script analyzes the time differences between removed duplicates and their kept counterparts:
+
+- **Total pairs calculated**: Number of duplicate pairs analyzed
+- **Mean difference**: Average time difference between duplicates
+- **Median difference**: Middle value of time differences
+- **Standard deviation**: Measure of variation in time differences
+- **Minimum/Maximum difference**: Range of time differences observed
+- **Percentiles** (25th, 75th, 90th, 95th): Distribution of time differences
+
+#### Outlier Detection
+
+Files with timestamp differences above the 95th percentile are listed separately, sorted by difference (largest first). This helps identify:
+- Unusual duplicate patterns
+- Potential server issues causing delayed re-uploads
+- Cases where duplicates occurred with longer time gaps
+
+### Example Output
+
+```
+============================================================
+Deduplication Summary:
+  Total images scanned: 3937
+  Unique images copied: 2375
+  Duplicates skipped: 1562
+  Duplicate groups found: 1512
+============================================================
+
+======================================================================
+Timestamp Difference Statistics (Removed vs Kept Duplicates)
+======================================================================
+Total pairs calculated:     1,562
+Mean difference:            1.1m (63.2s)
+Median difference:          1.0m (60.0s)
+Standard deviation:         13.6s
+Minimum difference:         36.0s
+Maximum difference:         3.1m (186.0s)
+25th percentile:           59.0s
+75th percentile:           62.0s
+90th percentile:           75.0s
+95th percentile:           91.0s
+======================================================================
+
+Files with timestamp difference above 95th percentile (1.5m (91.0s)):
+Total: 76 files
+...
+```
+
+### Quality Check Insights
+
+The timestamp statistics help identify:
+- **Typical duplicate pattern**: Most duplicates occur ~1 minute apart (median: 60 seconds)
+- **Server issues**: Consistent ~1 minute gaps suggest automated retry mechanisms
+- **Outliers**: Files with differences >95th percentile may indicate different issues
+- **Data integrity**: Ensures no unique images are incorrectly removed
+
 ## Project Structure
 
 ```
 DiscordPicExtract/
 ├── main.py                 # Main script entry point
 ├── discord_downloader.py   # Core downloader implementation
+├── deduplicate_images.py   # Duplicate detection and removal tool
 ├── config.py              # Configuration management
 ├── requirements.txt       # Python dependencies
 ├── .env.example          # Example environment file
 ├── .env                  # Your actual token (not in git)
-└── spx-realtime-aws/     # Output directory (created automatically)
+├── spx-realtime-aws/     # Output directory (created automatically)
+└── spx-realtime-aws-clean/ # Deduplicated images (created by deduplicate_images.py)
 ```
 
 ## License
