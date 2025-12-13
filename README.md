@@ -140,6 +140,48 @@ You can modify default settings in `config.py`:
 - Verify the channel ID/name is correct
 - Check that you have permission to view the channel
 
+## Complete Workflow
+
+This project provides a complete pipeline for downloading, cleaning, and organizing Discord images:
+
+1. **Download images** from Discord channel → `spx-realtime-aws/`
+2. **Remove duplicates** → `spx-realtime-aws-clean/`
+3. **Extract one image per day** → `spx-clean-1perDay/`
+
+### Step-by-Step Workflow
+
+#### Step 1: Download Images from Discord
+
+```bash
+python main.py
+```
+
+This downloads all images from the specified Discord channel to `spx-realtime-aws/` directory.
+
+#### Step 2: Remove Duplicate Images
+
+```bash
+python deduplicate_images.py --source spx-realtime-aws --output spx-realtime-aws-clean
+```
+
+This creates a clean version in `spx-realtime-aws-clean/` with duplicates removed.
+
+#### Step 3: Extract One Image Per Day
+
+```bash
+python extract_one_per_day.py --source spx-realtime-aws-clean --output spx-clean-1perDay
+```
+
+This extracts the last image of each day to `spx-clean-1perDay/` directory.
+
+#### Step 4: Quality Check (Optional)
+
+```bash
+python check_unique_dates.py
+```
+
+This verifies that all three folders have the same date coverage.
+
 ## Duplicate Image Detection
 
 The project includes a deduplication tool (`deduplicate_images.py`) to identify and remove duplicate images from downloaded collections.
@@ -243,19 +285,101 @@ The timestamp statistics help identify:
 - **Outliers**: Files with differences >95th percentile may indicate different issues
 - **Data integrity**: Ensures no unique images are incorrectly removed
 
+## Extract One Image Per Day
+
+The `extract_one_per_day.py` script extracts the last (most recent) image for each unique date from a source directory.
+
+### Usage
+
+```bash
+python extract_one_per_day.py --source spx-realtime-aws-clean --output spx-clean-1perDay
+```
+
+**Arguments:**
+- `--source`: Source directory containing images (default: `spx-realtime-aws-clean`)
+- `--output`: Output directory for one-per-day images (default: `spx-clean-1perDay`)
+
+### How It Works
+
+1. Scans all images in the source directory
+2. Groups images by date (extracted from filename: `YYYY-MM-DD_HH-MM-SS_...`)
+3. For each date, selects the image with the latest timestamp
+4. Copies the selected images to the output directory
+
+### Example Output
+
+```
+Scanning images in: spx-realtime-aws-clean
+Found 2375 image files
+Grouped images into 207 dates
+Extracting last image per day...
+  Processing 2025-02-14: 12 images, selected 2025-02-14_20-31-00_images_SPX-liqtest.png
+  Processing 2025-02-18: 8 images, selected 2025-02-18_20-55-48_images_SPX-liqtest.png
+  ...
+Extracted 207 images (one per day)
+Results saved to: spx-clean-1perDay
+```
+
+## Quality Check
+
+The `check_unique_dates.py` script verifies date coverage across all three folders.
+
+### Usage
+
+```bash
+python check_unique_dates.py
+```
+
+This script:
+- Counts unique dates in each folder (`spx-realtime-aws`, `spx-realtime-aws-clean`, `spx-clean-1perDay`)
+- Compares date coverage between folders
+- Identifies any missing dates
+
+### Example Output
+
+```
+======================================================================
+Unique Dates Analysis
+======================================================================
+
+Analyzing: spx-realtime-aws
+  Found 207 unique dates
+  Date range: 2025-02-14 to 2025-12-11
+
+Analyzing: spx-realtime-aws-clean
+  Found 207 unique dates
+  Date range: 2025-02-14 to 2025-12-11
+
+Analyzing: spx-clean-1perDay
+  Found 207 unique dates
+  Date range: 2025-02-14 to 2025-12-11
+
+======================================================================
+Summary:
+======================================================================
+  spx-realtime-aws              :  207 unique dates
+  spx-realtime-aws-clean         :  207 unique dates
+  spx-clean-1perDay              :  207 unique dates
+======================================================================
+```
+
 ## Project Structure
 
 ```
 DiscordPicExtract/
-├── main.py                 # Main script entry point
-├── discord_downloader.py   # Core downloader implementation
-├── deduplicate_images.py   # Duplicate detection and removal tool
-├── config.py              # Configuration management
-├── requirements.txt       # Python dependencies
-├── .env.example          # Example environment file
-├── .env                  # Your actual token (not in git)
-├── spx-realtime-aws/     # Output directory (created automatically)
-└── spx-realtime-aws-clean/ # Deduplicated images (created by deduplicate_images.py)
+├── main.py                    # Main script entry point
+├── discord_downloader.py       # Core downloader implementation
+├── deduplicate_images.py       # Duplicate detection and removal tool
+├── extract_one_per_day.py     # Extract last image per day
+├── check_unique_dates.py      # Quality check for date coverage
+├── config.py                  # Configuration management
+├── requirements.txt           # Python dependencies
+├── README.md                  # This file
+├── .env.example               # Example environment file
+├── .env                       # Your actual token (not in git)
+├── spx-realtime-aws/          # Downloaded images (created automatically)
+├── spx-realtime-aws-clean/    # Deduplicated images (created by deduplicate_images.py)
+└── spx-clean-1perDay/         # One image per day (created by extract_one_per_day.py)
 ```
 
 ## License
