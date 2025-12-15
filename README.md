@@ -363,6 +363,299 @@ Summary:
 ======================================================================
 ```
 
+## Timestamp Quality Check and Adjustment
+
+The `quality_check_timestamps.py` script provides comprehensive quality checking and interactive timestamp adjustment capabilities for downloaded images.
+
+### Features
+
+- **Quality Check**: Identifies files with timestamps outside US EST trading hours (09:30:00 to 16:00:00)
+- **Date Analysis**: Lists all dates when outside trading hours occurred
+- **Gap Detection**: Identifies missing dates between first and last outside trading hour timestamps (only counting dates with files)
+- **Time Distribution**: Creates a histogram plot showing the distribution of timestamps outside trading hours
+- **Interactive Adjustment**: Allows period-based timestamp adjustments with user prompts
+- **Post-Adjustment Verification**: Automatically re-checks all folders after adjustments
+
+### Usage
+
+#### Basic Quality Check
+
+```bash
+python quality_check_timestamps.py
+```
+
+Or check a specific folder:
+
+```bash
+python quality_check_timestamps.py --folder spx-realtime-aws
+```
+
+#### Interactive Timestamp Adjustment
+
+After running the quality check, the script will prompt you to adjust timestamps if any files are found outside trading hours:
+
+1. **Choose to adjust**: Answer "Yes" or "No" when prompted
+2. **Specify periods**: Enter how many time periods need adjustment
+3. **For each period**:
+   - Enter start date (format: `yyyy-mm-dd`)
+   - Enter end date (format: `yyyy-mm-dd`)
+   - Enter hours to add (can be negative to subtract)
+4. **Automatic application**: Adjustments are applied to all 3 folders automatically
+5. **Verification**: Post-adjustment quality check runs automatically
+
+### Example Output
+
+#### Quality Check Results
+
+```
+============================================================
+Quality Check: Timestamps Outside Trading Hours
+Checking folder: spx-realtime-aws-clean
+Trading hours: 09:30:00 to 16:00:00 (US EST)
+============================================================
+
+Displaying first 5 and last 5 of 315 file(s) outside trading hours:
+------------------------------------------------------------
+First 5 files:
+  2025-03-10_08-38-27_images_SPX-liqtest.png (time: 08:38:27)
+  2025-03-10_08-52-30_images_SPX-liqtest.png (time: 08:52:30)
+  2025-03-10_09-14-30_images_SPX-liqtest.png (time: 09:14:30)
+  2025-03-11_08-36-25_images_SPX-liqtest.png (time: 08:36:25)
+  2025-03-11_09-04-27_images_SPX-liqtest.png (time: 09:04:27)
+
+... (305 files omitted) ...
+
+Last 5 files:
+  2025-10-24_09-27-48_images_SPX-liqtest.png (time: 09:27:48)
+  2025-10-27_09-18-54_images_SPX-liqtest.png (time: 09:18:54)
+  2025-10-28_08-56-51_images_SPX-liqtest.png (time: 08:56:51)
+  2025-10-29_09-20-50_images_SPX-liqtest.png (time: 09:20:50)
+  2025-10-30_09-18-54_images_SPX-liqtest.png (time: 09:18:54)
+------------------------------------------------------------
+
+Dates when outside trading hours occurred (160 unique date(s)):
+------------------------------------------------------------
+  2025-03-10
+  2025-03-11
+  ...
+  2025-10-30
+------------------------------------------------------------
+
+Missing dates between first (2025-03-10) and last (2025-10-30) outside trading hour timestamps:
+Found 4 date(s) with files but no outside trading hour timestamps:
+------------------------------------------------------------
+  2025-06-05
+  2025-10-08
+  2025-10-21
+  2025-10-23
+------------------------------------------------------------
+
+This indicates the outside trading hours occurred in MULTIPLE periods (not continuous).
+
+============================================================
+QUALITY CHECK REMINDER
+============================================================
+IMPORTANT: Please manually check timestamps on dates around the first and last
+outside trading hour occurrences for quality assurance purposes.
+
+First date with outside trading hours: 2025-03-10
+Last date with outside trading hours: 2025-10-30
+
+Please manually verify timestamps on:
+  - A few days BEFORE the first date (around 2025-03-07 to 2025-03-10)
+  - A few days AFTER the last date (around 2025-10-30 to 2025-11-02)
+
+REASON: The timestamps represent when signals occurred. If signals don't occur
+until later in the day, timezone issues might not be visible in the data.
+Manual verification of dates around the boundaries helps ensure no timezone
+adjustment issues were missed due to signal timing.
+============================================================
+
+Distribution of timestamps outside trading hours by hour of day (EST):
+------------------------------------------------------------
+  08:00 - 187 file(s)
+  09:00 - 128 file(s)
+------------------------------------------------------------
+
+Saved time-of-day distribution plot to: outside_trading_hours_distribution.png
+
+Total: 315 file(s) outside trading hours
+Total: 160 unique date(s) with files outside trading hours
+Total: 2 hour bucket(s) with files outside trading hours
+Total: 4 missing date(s) in the period range
+============================================================
+```
+
+#### Distribution Plot
+
+The script generates a histogram plot saved as `outside_trading_hours_distribution.png` showing the distribution of timestamps outside trading hours by hour of day.
+
+#### Interactive Adjustment Example
+
+```
+============================================================
+Timestamp Adjustment
+============================================================
+
+Do you want to adjust timestamps? (Yes/No): Yes
+
+How many periods need to change? 2
+
+--- Period 1 ---
+Period 1 start date (yyyy-mm-dd): 2025-03-10
+Period 1 end date (yyyy-mm-dd): 2025-03-15
+Add how many hours? (can be negative to subtract): -5
+
+Adjusting timestamps for period 1:
+  Date range: 2025-03-10 to 2025-03-15
+  Hours to add: -5
+  Folders: spx-realtime-aws, spx-realtime-aws-clean, spx-clean-1perDay
+  spx-realtime-aws: 45 renamed, 3892 skipped
+  spx-realtime-aws-clean: 23 renamed, 2352 skipped
+  spx-clean-1perDay: 0 renamed, 207 skipped
+
+Period 1 summary: 68 files renamed across all folders
+
+--- Period 2 ---
+Period 2 start date (yyyy-mm-dd): 2025-10-25
+Period 2 end date (yyyy-mm-dd): 2025-10-30
+Add how many hours? (can be negative to subtract): -3
+...
+
+============================================================
+Timestamp adjustment completed!
+============================================================
+
+============================================================
+Post-Adjustment Quality Check
+============================================================
+Running quality check on all 3 folders to verify adjustments...
+
+Checking folder: spx-realtime-aws
+------------------------------------------------------------
+  ⚠ spx-realtime-aws: 7 file(s) outside trading hours
+     7 unique date(s) with files outside trading hours
+
+Checking folder: spx-realtime-aws-clean
+------------------------------------------------------------
+  ⚠ spx-realtime-aws-clean: 7 file(s) outside trading hours
+     7 unique date(s) with files outside trading hours
+
+Checking folder: spx-clean-1perDay
+------------------------------------------------------------
+  ✓ spx-clean-1perDay: All files are within trading hours
+
+============================================================
+Post-Adjustment Summary
+============================================================
+spx-realtime-aws:
+  Files outside trading hours: 7
+  Unique dates: 7
+  Dates: 2025-05-14, 2025-06-16, 2025-07-03, 2025-07-10, 2025-07-30, 2025-09-24, 2025-10-24
+
+spx-realtime-aws-clean:
+  Files outside trading hours: 7
+  Unique dates: 7
+  Dates: 2025-05-14, 2025-06-16, 2025-07-03, 2025-07-10, 2025-07-30, 2025-09-24, 2025-10-24
+
+spx-clean-1perDay:
+  Files outside trading hours: 0
+  Unique dates: 0
+
+Overall Summary:
+  Total files outside trading hours across all folders: 14
+  Total unique dates with files outside trading hours: 7
+  All dates: 2025-05-14, 2025-06-16, 2025-07-03, 2025-07-10, 2025-07-30, 2025-09-24, 2025-10-24
+============================================================
+```
+
+### What It Checks
+
+1. **Trading Hours Compliance**: Identifies files with timestamps before 09:30:00 or after 16:00:00 (US EST)
+2. **Date Coverage**: Lists all unique dates when outside trading hours occurred
+3. **Gap Analysis**: Finds missing dates (with files) between first and last outside trading hour timestamps
+4. **Time Distribution**: Creates a histogram showing when outside trading hours occur most frequently
+
+### Adjustment Features
+
+- **Period-based**: Adjust multiple time periods independently
+- **Date Range**: Specify start and end dates for each period
+- **Hour Adjustment**: Add or subtract hours (use negative numbers to subtract)
+- **Automatic Application**: Applies to all 3 folders simultaneously
+- **Day Rollover Handling**: Automatically handles hour adjustments that cross midnight
+- **Safety Checks**: Skips files if target filename already exists
+
+### Use Cases
+
+- **Timezone Correction**: Fix timestamps that are offset due to timezone issues
+- **Quality Assurance**: Verify all timestamps are within expected trading hours
+- **Data Validation**: Identify patterns in timestamp issues
+- **Selective Adjustment**: Adjust specific date ranges that need correction
+
+## Timestamp Adjustment Tools
+
+### Bulk Timestamp Adjustment
+
+The `adjust_timestamps.py` script provides a simple way to adjust timestamps across all files by subtracting a fixed number of hours.
+
+#### Usage
+
+```bash
+python adjust_timestamps.py
+```
+
+Or with custom folders:
+
+```bash
+python adjust_timestamps.py --folders spx-realtime-aws spx-realtime-aws-clean spx-clean-1perDay
+```
+
+**Dry Run Mode** (preview changes without applying):
+
+```bash
+python adjust_timestamps.py --dry-run
+```
+
+#### Example
+
+This script was used to subtract 5 hours from all timestamps to correct a timezone offset:
+
+```bash
+python adjust_timestamps.py
+```
+
+**Output:**
+```
+============================================================
+File Timestamp Adjustment Script
+Subtracting 5 hours from hour component in filenames
+============================================================
+
+Processing folder: spx-realtime-aws
+Mode: RENAME
+------------------------------------------------------------
+  RENAMED: 2025-02-14_14-37-02_images_SPX-liqtest.png -> 2025-02-14_09-37-02_images_SPX-liqtest.png
+  RENAMED: 2025-02-14_14-59-00_images_SPX-liqtest.png -> 2025-02-14_09-59-00_images_SPX-liqtest.png
+  ...
+Summary for spx-realtime-aws:
+  Renamed: 3937
+  Skipped: 0
+
+...
+
+============================================================
+Overall Summary:
+  Total renamed: 6519
+  Total skipped: 0
+============================================================
+```
+
+### Specific Timestamp Adjustment
+
+The `adjust_specific_timestamp.py` script allows targeted adjustments for specific dates and time conditions. This script is typically used for one-off corrections.
+
+**Note**: This script is designed for manual, case-by-case adjustments and should be modified for each specific use case.
+
 ## Project Structure
 
 ```
@@ -372,6 +665,9 @@ DiscordPicExtract/
 ├── deduplicate_images.py       # Duplicate detection and removal tool
 ├── extract_one_per_day.py     # Extract last image per day
 ├── check_unique_dates.py      # Quality check for date coverage
+├── quality_check_timestamps.py # Timestamp quality check and adjustment
+├── adjust_timestamps.py        # Bulk timestamp adjustment tool
+├── adjust_specific_timestamp.py # Specific timestamp adjustment (manual use)
 ├── config.py                  # Configuration management
 ├── requirements.txt           # Python dependencies
 ├── README.md                  # This file
@@ -379,7 +675,8 @@ DiscordPicExtract/
 ├── .env                       # Your actual token (not in git)
 ├── spx-realtime-aws/          # Downloaded images (created automatically)
 ├── spx-realtime-aws-clean/    # Deduplicated images (created by deduplicate_images.py)
-└── spx-clean-1perDay/         # One image per day (created by extract_one_per_day.py)
+├── spx-clean-1perDay/         # One image per day (created by extract_one_per_day.py)
+└── outside_trading_hours_distribution.png # Distribution plot (generated by quality_check_timestamps.py)
 ```
 
 ## License
