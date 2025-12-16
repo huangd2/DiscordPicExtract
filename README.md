@@ -175,7 +175,17 @@ python extract_one_per_day.py --source spx-realtime-aws-clean --output spx-clean
 
 This extracts the last image of each day to `spx-clean-1perDay/` directory.
 
-#### Step 4: Quality Check (Optional)
+#### Step 4: Extract Buy/Sell Signals (Optional)
+
+```bash
+python extract_signals.py --folder spx-realtime-aws-clean --date 2025-02-14
+```
+
+This extracts buy/sell signals from chart images and saves to `Desktop/SPXsignal/{date}.csv`.
+
+For detailed documentation, see [README_EXTRACT_SIGNALS.md](README_EXTRACT_SIGNALS.md).
+
+#### Step 5: Quality Check (Optional)
 
 ```bash
 python check_unique_dates.py
