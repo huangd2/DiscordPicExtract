@@ -142,11 +142,12 @@ You can modify default settings in `config.py`:
 
 ## Complete Workflow
 
-This project provides a complete pipeline for downloading, cleaning, and organizing Discord images:
+This project provides a complete pipeline for downloading, cleaning, organizing, and extracting signals from Discord images:
 
 1. **Download images** from Discord channel → `spx-realtime-aws/`
 2. **Remove duplicates** → `spx-realtime-aws-clean/`
 3. **Extract one image per day** → `spx-clean-1perDay/`
+4. **Extract buy/sell signals** → `Desktop/SPXsignal/{date}.csv` (see [Signal Extraction](#signal-extraction))
 
 ### Step-by-Step Workflow
 
