@@ -285,7 +285,7 @@ def extract_y_axis_range(image_path: Path) -> Optional[Tuple[float, float, int, 
     
     all_detected_prices = []
     
-    # Try EasyOCR first
+    # Try EasyOCR first - collect ALL prices, don't stop early
     if EASYOCR_AVAILABLE and EASYOCR_READER is not None:
         try:
             # Try different y-axis widths

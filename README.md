@@ -193,6 +193,24 @@ python check_unique_dates.py
 
 This verifies that all three folders have the same date coverage.
 
+#### Step 6: Fetch SPX Prices (Optional)
+
+After extracting signals, you can fetch actual SPX prices from Polygon.io API to add to your signal CSV files:
+
+```bash
+python fetch_spx_prices.py
+```
+
+This script:
+- Reads CSV files from `~/Desktop/SPXsignal/`
+- Fetches SPY (SPDR S&P 500 ETF) price data from Polygon.io (used as proxy for SPX due to API limitations)
+- Adds an `fPrice` column with the actual market price at each signal timestamp
+- Updates the CSV files in place
+
+**Note:** Requires a Polygon.io API key (free tier available). See [README_FETCH_SPX_PRICES.md](README_FETCH_SPX_PRICES.md) for detailed setup instructions.
+
+**Important:** The script uses SPY as a proxy for SPX due to API limitations on the free tier. SPY closely tracks the S&P 500 Index.
+
 ## Duplicate Image Detection
 
 The project includes a deduplication tool (`deduplicate_images.py`) to identify and remove duplicate images from downloaded collections.

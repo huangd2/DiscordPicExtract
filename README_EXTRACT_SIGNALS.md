@@ -186,6 +186,7 @@ Total signals extracted: 16
 - Y-axis range detection may need adjustment
 - Check that grid boundaries are correctly identified
 - Verify triangle center calculation (uses geometric center adjusted for orientation)
+- **Known Issue:** Price extraction may be inaccurate during rapid price movements (fast drops or increases). The OCR-based y-axis extraction and triangle position mapping may not correctly capture prices during volatile periods. Manual verification is recommended for signals during high volatility.
 
 ## Technical Details
 
