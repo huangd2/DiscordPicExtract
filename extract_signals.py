@@ -114,6 +114,8 @@ def detect_triangles(image_path: Path) -> List[Dict]:
         all_contours.extend(contours)
     
     # Process all found contours
+    # Use triangle mask for accurate color extraction from triangle interior
+    # Keep original area and aspect ratio filters
     for contour in all_contours:
         area = cv2.contourArea(contour)
         if area < 30 or area > 10000:
@@ -173,62 +175,52 @@ def detect_triangles(image_path: Path) -> List[Dict]:
                 center_y_img = max(0, min(center_y, img_rgb.shape[0] - 1))
                 center_x_img = max(0, min(center_x, img_rgb.shape[1] - 1))
                 
-                # Sample from a larger region to get better color representation
-                sample_radius = 5
-                y_start = max(0, center_y_img - sample_radius)
-                y_end = min(img_rgb.shape[0], center_y_img + sample_radius + 1)
-                x_start = max(0, center_x_img - sample_radius)
-                x_end = min(img_rgb.shape[1], center_x_img + sample_radius + 1)
+                # Use triangle mask to extract color from actual triangle interior
+                # Create a mask for the triangle using its vertices
+                triangle_mask = np.zeros((img_rgb.shape[0], img_rgb.shape[1]), dtype=np.uint8)
+                pts_int32 = pts_full.astype(np.int32)
+                cv2.fillPoly(triangle_mask, [pts_int32], 255)
                 
-                color_region = img_rgb[y_start:y_end, x_start:x_end]
+                # Get bounding box of triangle for efficiency
+                x_coords = pts_full[:, 0].astype(int)
+                y_coords = pts_full[:, 1].astype(int)
+                x_min = max(0, int(x_coords.min()))
+                x_max = min(img_rgb.shape[1], int(x_coords.max()) + 1)
+                y_min = max(0, int(y_coords.min()))
+                y_max = min(img_rgb.shape[0], int(y_coords.max()) + 1)
                 
-                if color_region.size > 0:
+                # Extract region within bounding box
+                triangle_region = img_rgb[y_min:y_max, x_min:x_max]
+                mask_region = triangle_mask[y_min:y_max, x_min:x_max]
+                
+                # Get pixels that are inside the triangle
+                triangle_pixels = triangle_region[mask_region > 0]
+                
+                if len(triangle_pixels) > 0:
                     # Convert to grayscale to detect line pixels
-                    gray_region = cv2.cvtColor(color_region, cv2.COLOR_RGB2GRAY)
+                    gray_triangle = cv2.cvtColor(triangle_region, cv2.COLOR_RGB2GRAY)
+                    gray_mask = gray_triangle[mask_region > 0]
                     
-                    # Detect line pixels using multiple methods
+                    # Filter out line pixels (dark pixels that are likely grid lines)
                     # Method 1: Very dark pixels (likely lines)
                     dark_threshold = 80
-                    dark_mask = gray_region < dark_threshold
+                    bright_mask = gray_mask > dark_threshold
                     
-                    # Method 2: Edge detection to find line edges
-                    edges = cv2.Canny(gray_region, 50, 150)
-                    edge_mask = edges > 0
-                    
-                    # Method 3: Detect thin horizontal/vertical lines
-                    # Horizontal lines
-                    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 1))
-                    horizontal_lines = cv2.morphologyEx((gray_region < 100).astype(np.uint8) * 255, 
-                                                       cv2.MORPH_OPEN, horizontal_kernel)
-                    horizontal_mask = horizontal_lines > 0
-                    
-                    # Vertical lines
-                    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 9))
-                    vertical_lines = cv2.morphologyEx((gray_region < 100).astype(np.uint8) * 255,
-                                                     cv2.MORPH_OPEN, vertical_kernel)
-                    vertical_mask = vertical_lines > 0
-                    
-                    # Combine all line masks
-                    line_mask = dark_mask | edge_mask | horizontal_mask | vertical_mask
-                    
-                    # Create mask for non-line pixels
-                    non_line_mask = ~line_mask
-                    
-                    # Extract colors from non-line pixels only
-                    color_region_flat = color_region.reshape(-1, 3)
-                    non_line_pixels = color_region_flat[non_line_mask.reshape(-1)]
-                    
-                    if len(non_line_pixels) > 0:
-                        # Use median instead of mean for better robustness
-                        color_rgb = np.median(non_line_pixels, axis=0).astype(int)
+                    if np.sum(bright_mask) > len(bright_mask) * 0.3:  # At least 30% bright pixels
+                        # Use median of bright pixels inside triangle
+                        bright_pixels = triangle_pixels[bright_mask]
+                        color_rgb = np.median(bright_pixels, axis=0).astype(int)
                     else:
-                        # If all pixels are lines, use mean of all pixels but exclude very dark ones
-                        bright_pixels = color_region_flat[gray_region.reshape(-1) > 50]
-                        if len(bright_pixels) > 0:
-                            color_rgb = np.median(bright_pixels, axis=0).astype(int)
+                        # If too many dark pixels, try excluding very dark ones
+                        medium_bright_mask = gray_mask > 50
+                        if np.sum(medium_bright_mask) > len(medium_bright_mask) * 0.2:
+                            medium_pixels = triangle_pixels[medium_bright_mask]
+                            color_rgb = np.median(medium_pixels, axis=0).astype(int)
                         else:
-                            color_rgb = np.mean(color_region_flat, axis=0).astype(int)
+                            # Fallback: use median of all triangle pixels
+                            color_rgb = np.median(triangle_pixels, axis=0).astype(int)
                 else:
+                    # Fallback to center pixel if mask is empty (shouldn't happen)
                     color_rgb = img_rgb[center_y_img, center_x_img]
                 
                 r, g, b = color_rgb
