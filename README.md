@@ -211,6 +211,28 @@ This script:
 
 **Important:** The script uses SPY as a proxy for SPX due to API limitations on the free tier. SPY closely tracks the S&P 500 Index.
 
+#### Step 7: Analyze Signal Statistics (Optional)
+
+After collecting signal data, you can analyze signal patterns and generate statistics:
+
+```bash
+python analyze_signal_statistics.py
+```
+
+This script:
+- Reads all CSV files from `~/Desktop/SPXsignal/`
+- Calculates daily statistics (min, max, median, average) for overall, buy, and sell signals
+- Generates time-of-day distribution histograms
+- Creates visualizations showing signal patterns throughout the trading day
+
+**Output:**
+- Console statistics table
+- `signal_time_distribution.png`: Stacked chart with buy (green, below x-axis) and sell (red, above x-axis)
+- `buy_signal_time_distribution.png`: Buy signal time distribution
+- `sell_signal_time_distribution.png`: Sell signal time distribution
+
+For detailed documentation, see [README_ANALYZE_SIGNAL_STATISTICS.md](README_ANALYZE_SIGNAL_STATISTICS.md).
+
 ## Duplicate Image Detection
 
 The project includes a deduplication tool (`deduplicate_images.py`) to identify and remove duplicate images from downloaded collections.
