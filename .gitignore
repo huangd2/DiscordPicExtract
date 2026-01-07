@@ -47,3 +47,5 @@ spx-realtime-aws/
 spx-realtime-aws-clean/
 spx-clean-1perDay/
 
+# Individual daily CSV files (keep only combined_data.csv)
+2025-*.csv

@@ -218,9 +218,14 @@ The largest single-day loss was -$247.14 (2.47% of initial capital). The strateg
 - **Data Period:** February 14, 2025 - December 11, 2025
 - **Total Trading Days:** 207
 - **Total Signals Processed:** 2,362
+<<<<<<< HEAD
 - **Backtest Script:** `backtest_strategy.py` (in DiscordPicExtract folder)
 - **Data Source:** `combined_data.csv` (in DiscordPicExtract folder)
 - **Daily CSV Files:** Individual daily CSV files are stored in `Desktop/SPXsignal/` folder
+=======
+- **Backtest Script:** `backtest_strategy.py`
+- **Data Source:** `combined_data.csv`
+>>>>>>> a792e50c7830470df0effa190cca739b9313f9de
 
 ---
 

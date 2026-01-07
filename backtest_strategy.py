@@ -6,9 +6,13 @@ from collections import defaultdict
 
 # Configuration
 INITIAL_CAPITAL = 10000.0
+<<<<<<< HEAD
 import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CSV_FILE = os.path.join(SCRIPT_DIR, 'combined_data.csv')
+=======
+CSV_FILE = r'C:\Users\Vivian\Desktop\SPXsignal\combined_data.csv'
+>>>>>>> a792e50c7830470df0effa190cca739b9313f9de
 
 # Read and parse data
 print("Reading data...")
