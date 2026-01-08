@@ -5,14 +5,12 @@ from datetime import datetime
 from collections import defaultdict
 
 # Configuration
+STRATEGY_NAME = "Low Risk Accumulation Strategy"
 INITIAL_CAPITAL = 10000.0
-<<<<<<< HEAD
 import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CSV_FILE = os.path.join(SCRIPT_DIR, 'combined_data.csv')
-=======
-CSV_FILE = r'C:\Users\Vivian\Desktop\SPXsignal\combined_data.csv'
->>>>>>> a792e50c7830470df0effa190cca739b9313f9de
+OUTPUT_CSV = os.path.join(SCRIPT_DIR, 'strategy1_low_risk_accumulation_trades.csv')
 
 # Read and parse data
 print("Reading data...")
@@ -36,6 +34,8 @@ shares = 0
 trades = []  # List of completed trades
 daily_stats = []  # Daily statistics
 current_trade_buys = []  # Track buys for current open position
+trade_actions = []  # List of all trade actions for CSV output
+trade_number = 0  # Trade counter
 
 # Track position at end of each day
 daily_positions = {}  # date -> shares held
@@ -62,6 +62,20 @@ for idx, row in df.iterrows():
                 'price': f_price,
                 'shares': 1
             })
+            
+            # Record buy action for CSV
+            total_cost = sum(buy['price'] * buy['shares'] for buy in current_trade_buys)
+            avg_price = total_cost / shares if shares > 0 else 0
+            trade_actions.append({
+                'trade #': '',
+                'timestamp': timestamp,
+                'buy/sell': 'Buy',
+                'fPrice': f_price,
+                'position': shares,
+                'avgPrice': round(avg_price, 2) if shares > 0 else '',
+                'remaining capital': round(cash, 2),
+                'PnL': ''
+            })
     
     # Handle Sell signals
     elif signal_type == 'Sell' and risk in ['low', 'medium']:
@@ -70,41 +84,64 @@ for idx, row in df.iterrows():
             sell_price = f_price
             total_shares = shares
             total_cost = sum(buy['price'] * buy['shares'] for buy in current_trade_buys)
+            avg_buy_price = total_cost / total_shares if total_shares > 0 else 0
             
-            # Calculate P&L
-            proceeds = sell_price * total_shares
-            pnl = proceeds - total_cost
-            
-            # Update cash
-            cash += proceeds
-            shares = 0
-            
-            # Record trade
-            buy_date = current_trade_buys[0]['date'] if current_trade_buys else signal_date
-            sell_date = signal_date
-            
-            trade = {
-                'buy_date': buy_date,
-                'sell_date': sell_date,
-                'buy_timestamp': current_trade_buys[0]['timestamp'] if current_trade_buys else timestamp,
-                'sell_timestamp': timestamp,
-                'shares': total_shares,
-                'avg_buy_price': total_cost / total_shares if total_shares > 0 else 0,
-                'sell_price': sell_price,
-                'cost': total_cost,
-                'proceeds': proceeds,
-                'pnl': pnl,
-                'is_win': pnl > 0,
-                'is_cross_day': buy_date != sell_date
-            }
-            
-            trades.append(trade)
-            
-            if trade['is_cross_day']:
-                cross_day_trades.append(trade)
-            
-            # Reset current trade buys
-            current_trade_buys = []
+            # Only sell if sell price is higher than average buy price
+            if sell_price > avg_buy_price:
+                # Calculate P&L
+                proceeds = sell_price * total_shares
+                pnl = proceeds - total_cost
+                
+                # Update cash
+                cash += proceeds
+                
+                # Increment trade number for completed trade
+                trade_number += 1
+                
+                # Record sell action for CSV (with PnL since position closes)
+                avg_price = total_cost / total_shares if total_shares > 0 else 0
+                trade_actions.append({
+                    'trade #': trade_number,
+                    'timestamp': timestamp,
+                    'buy/sell': 'Sell',
+                    'fPrice': sell_price,
+                    'position': 0,  # Position is now 0 after selling all
+                    'avgPrice': round(avg_price, 2) if total_shares > 0 else '',
+                    'remaining capital': round(cash, 2),
+                    'PnL': round(pnl, 2)
+                })
+                
+                shares = 0
+                
+                # Record trade
+                buy_date = current_trade_buys[0]['date'] if current_trade_buys else signal_date
+                sell_date = signal_date
+                
+                trade = {
+                    'buy_date': buy_date,
+                    'sell_date': sell_date,
+                    'buy_timestamp': current_trade_buys[0]['timestamp'] if current_trade_buys else timestamp,
+                    'sell_timestamp': timestamp,
+                    'shares': total_shares,
+                    'avg_buy_price': avg_buy_price,
+                    'sell_price': sell_price,
+                    'cost': total_cost,
+                    'proceeds': proceeds,
+                    'pnl': pnl,
+                    'is_win': pnl > 0,
+                    'is_cross_day': buy_date != sell_date
+                }
+                
+                trades.append(trade)
+                
+                if trade['is_cross_day']:
+                    cross_day_trades.append(trade)
+                
+                # Reset current trade buys
+                current_trade_buys = []
+            else:
+                # Sell price not above avg buy price, skip this sell signal
+                pass
     
     # Track position at end of each day
     # Check if this is the last signal of the day
@@ -121,6 +158,22 @@ if shares > 0:
     total_cost = sum(buy['price'] * buy['shares'] for buy in current_trade_buys)
     proceeds = final_price * shares
     pnl = proceeds - total_cost
+    
+    # Increment trade number for final trade
+    trade_number += 1
+    
+    # Record final sell action for CSV (with PnL since position closes)
+    avg_price = total_cost / shares if shares > 0 else 0
+    trade_actions.append({
+        'trade #': trade_number,
+        'timestamp': last_signal['timestamp'],
+        'buy/sell': 'Sell',
+        'fPrice': final_price,
+        'position': 0,  # Position is now 0 after selling all
+        'avgPrice': round(avg_price, 2) if shares > 0 else '',
+        'remaining capital': round(cash + proceeds, 2),
+        'PnL': round(pnl, 2)
+    })
     
     buy_date = current_trade_buys[0]['date'] if current_trade_buys else last_signal['date']
     
@@ -184,18 +237,24 @@ for idx, row in df.iterrows():
             sell_price = f_price
             total_shares = shares
             total_cost = sum(buy['price'] * buy['shares'] for buy in current_trade_buys)
+            avg_buy_price = total_cost / total_shares if total_shares > 0 else 0
             
-            proceeds = sell_price * total_shares
-            pnl = proceeds - total_cost
-            
-            cash += proceeds
-            shares = 0
-            
-            # Record daily stats
-            daily_trade_counts[signal_date] += 1
-            daily_pnl[signal_date] += pnl
-            
-            current_trade_buys = []
+            # Only sell if sell price is higher than average buy price
+            if sell_price > avg_buy_price:
+                proceeds = sell_price * total_shares
+                pnl = proceeds - total_cost
+                
+                cash += proceeds
+                shares = 0
+                
+                # Record daily stats
+                daily_trade_counts[signal_date] += 1
+                daily_pnl[signal_date] += pnl
+                
+                current_trade_buys = []
+            else:
+                # Sell price not above avg buy price, skip this sell signal
+                pass
     
     # Track end of day state
     is_last_signal_of_day = (idx == len(df) - 1) or (df.loc[idx + 1, 'date'] != signal_date)
@@ -232,7 +291,7 @@ cross_day_losses = len(cross_day_trades) - cross_day_wins
 
 # Print comprehensive summary
 print("\n" + "="*80)
-print("TRADING STRATEGY BACKTEST RESULTS")
+print(f"TRADING STRATEGY BACKTEST RESULTS: {STRATEGY_NAME}")
 print("="*80)
 
 print(f"\nCAPITAL & PERFORMANCE:")
@@ -362,6 +421,13 @@ else:
     print(f"  No days with loss > $50")
 
 print("\n" + "="*80)
+
+# Write trade actions to CSV file
+print("\nWriting trade actions to CSV...")
+trade_df = pd.DataFrame(trade_actions)
+trade_df.to_csv(OUTPUT_CSV, index=False)
+print(f"  Saved: {OUTPUT_CSV}")
+print(f"  Total actions recorded: {len(trade_actions)}")
 
 # Create visualizations
 print("\nGenerating visualizations...")

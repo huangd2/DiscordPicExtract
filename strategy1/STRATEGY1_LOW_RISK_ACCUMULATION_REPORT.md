@@ -1,8 +1,8 @@
-# SPX Trading Strategy Backtest Report
+# SPX Trading Strategy Backtest Report: Low Risk Accumulation Strategy
 
 ## Executive Summary
 
-This report presents a comprehensive backtest analysis of a trading strategy based on SPX (S&P 500) signals from February 14, 2025 to December 11, 2025. The strategy executes trades based on Buy/Sell signals with risk filtering, tracking positions across trading days.
+This report presents a comprehensive backtest analysis of **Strategy 1: Low Risk Accumulation Strategy** based on SPX (S&P 500) signals from February 14, 2025 to December 11, 2025. The strategy executes trades based on Buy/Sell signals with risk filtering, tracking positions across trading days.
 
 **Key Results:**
 - **Initial Capital:** $10,000.00
@@ -13,7 +13,9 @@ This report presents a comprehensive backtest analysis of a trading strategy bas
 
 ---
 
-## Strategy Rules
+## Strategy 1: Low Risk Accumulation Strategy
+
+### Strategy Rules
 
 1. **Entry Signal:** Buy 1 share at `fPrice` when a Buy signal with `risk='low'` occurs
 2. **Multiple Buys:** Accumulate shares (buy 1 share per Buy signal) until a Sell signal
@@ -22,6 +24,10 @@ This report presents a comprehensive backtest analysis of a trading strategy bas
 5. **Cross-Day Positions:** Positions carry over to next trading day if not closed
 6. **Final Close:** Close any remaining position at the last signal's `fPrice` on the last day
 7. **Capital Constraint:** Only buy if sufficient cash available (starting with $10,000)
+
+### Strategy Rationale
+
+This strategy focuses on **low-risk entry signals** while allowing **medium-risk exit signals**, creating an asymmetric risk profile. By accumulating shares on multiple low-risk buy signals before selling, the strategy aims to capture larger moves while maintaining disciplined entry criteria.
 
 ---
 
@@ -218,22 +224,20 @@ The largest single-day loss was -$247.14 (2.47% of initial capital). The strateg
 - **Data Period:** February 14, 2025 - December 11, 2025
 - **Total Trading Days:** 207
 - **Total Signals Processed:** 2,362
-<<<<<<< HEAD
-- **Backtest Script:** `backtest_strategy.py` (in DiscordPicExtract folder)
+- **Strategy Name:** Low Risk Accumulation Strategy (Strategy 1)
+- **Backtest Script:** `strategy1_low_risk_accumulation.py` (in DiscordPicExtract folder)
 - **Data Source:** `combined_data.csv` (in DiscordPicExtract folder)
 - **Daily CSV Files:** Individual daily CSV files are stored in `Desktop/SPXsignal/` folder
-=======
-- **Backtest Script:** `backtest_strategy.py`
-- **Data Source:** `combined_data.csv`
->>>>>>> a792e50c7830470df0effa190cca739b9313f9de
+- **Output CSV:** `strategy1_low_risk_accumulation_trades.csv` - Detailed trade log with all buy/sell actions
 
 ---
 
 ## Files Included
 
-- `backtest_strategy.py` - Python script implementing the backtest
+- `strategy1_low_risk_accumulation.py` - Python script implementing Strategy 1 backtest
 - `combined_data.csv` - Combined trading signals data
-- `BACKTEST_REPORT.md` - This report
+- `strategy1_low_risk_accumulation_trades.csv` - Detailed trade log with columns: trade #, timestamp, buy/sell, fPrice, position, remaining capital, PnL
+- `STRATEGY1_LOW_RISK_ACCUMULATION_REPORT.md` - This report
 - All visualization PNG files (6 charts)
 
 ---
