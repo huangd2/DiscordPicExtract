@@ -1,11 +1,11 @@
 # Strategy 2 Recommendations: Performance Optimization
 
-## Performance Analysis: Strategy 2 vs QQQ Benchmark
+## Performance Analysis: Strategy 2 vs SPY Benchmark
 
 **Performance Gap:**
 - **Strategy 2:** 9.06% return
-- **QQQ:** 16% return  
-- **Underperformance:** -6.94 percentage points
+- **SPY:** 12.8% return  
+- **Underperformance:** -3.74 percentage points
 
 **Current Strengths:**
 - ✅ 100% win rate (158/158 trades)
@@ -105,7 +105,7 @@
 **Current:** Low risk, low return
 
 **Consider:**
-- Compare Sharpe ratio vs QQQ
+- Compare Sharpe ratio vs SPY
 - Compare maximum drawdown
 - Compare volatility-adjusted returns
 
@@ -166,7 +166,7 @@ If all optimizations are implemented successfully:
 - **Relaxed Buy Criteria:** +2-3% return potential
 - **Partial Profit-Taking:** +1-2% return potential
 
-**Combined Potential:** 15-20% return (closer to QQQ's 16%)
+**Combined Potential:** 12-15% return (closer to SPY's 12.8%)
 
 ---
 
@@ -178,7 +178,7 @@ If all optimizations are implemented successfully:
 - ⚠️ Higher volatility
 - ⚠️ Larger drawdowns
 
-**Question:** Is the current 100% win rate worth the 6.94% underperformance?
+**Question:** Is the current 100% win rate worth the 3.74% underperformance?
 
 ---
 
@@ -220,5 +220,5 @@ If all optimizations are implemented successfully:
 ---
 
 *Document created: December 2025*
-*Based on Strategy 2 backtest results (9.06% return vs QQQ 16% benchmark)*
+*Based on Strategy 2 backtest results (9.06% return vs SPY 12.8% benchmark)*
 
