@@ -2,12 +2,13 @@
 
 ## Executive Summary
 
-This report analyzes buy signals and their profitability across three distinct patterns:
+This report analyzes buy signals and their profitability across four distinct patterns:
 1. **Buy → Sell** (immediate sell signal)
 2. **Buy → Buy → Sell** (one buy signal before sell)
 3. **Buy → Buy → Buy → Sell** (two buy signals before sell)
+4. **Buy → Buy → Buy → Buy → Sell** (three buy signals before sell)
 
-**Key Finding:** Out of 1,232 total buy signals, **515 cases (41.8%)** result in profitable sell opportunities within the next 3 signals, where the sell price is higher than the initial buy price.
+**Key Finding:** Out of 1,232 total buy signals, **515 cases (41.8%)** result in profitable sell opportunities within the next 3 signals, and **82 additional cases (6.66%)** result in profitable sell opportunities in the 4th signal pattern, where the sell price is higher than the initial buy price.
 
 ---
 
@@ -17,9 +18,10 @@ This report analyzes buy signals and their profitability across three distinct p
 2. [Pattern 1: Buy → Sell Analysis](#pattern-1-buy--sell-analysis)
 3. [Pattern 2: Buy → Buy → Sell Analysis](#pattern-2-buy--buy--sell-analysis)
 4. [Pattern 3: Buy → Buy → Buy → Sell Analysis](#pattern-3-buy--buy--buy--sell-analysis)
-5. [Profit Duration Analysis](#profit-duration-analysis)
-6. [Duration Distribution](#duration-distribution)
-7. [Conclusions](#conclusions)
+5. [Pattern 4: Buy → Buy → Buy → Buy → Sell Analysis](#pattern-4-buy--buy--buy--buy--sell-analysis)
+6. [Profit Duration Analysis](#profit-duration-analysis)
+7. [Duration Distribution](#duration-distribution)
+8. [Conclusions](#conclusions)
 
 ---
 
@@ -34,7 +36,9 @@ This report analyzes buy signals and their profitability across three distinct p
 - **Buy → Sell (Higher):** 267 cases (21.67%)
 - **Buy → Buy → Sell (Higher):** 147 cases (11.93%)
 - **Buy → Buy → Buy → Sell (Higher):** 101 cases (8.20%)
-- **Total Profitable Cases:** 515 cases (41.8%)
+- **Buy → Buy → Buy → Buy → Sell (Higher):** 82 cases (6.66%)
+- **Total Profitable Cases (Patterns 1-3):** 515 cases (41.8%)
+- **Total Profitable Cases (All Patterns):** 597 cases (48.5%)
 
 ---
 
@@ -152,6 +156,88 @@ This report analyzes buy signals and their profitability across three distinct p
 
 ---
 
+## Pattern 4: Buy → Buy → Buy → Buy → Sell Analysis
+
+### Pattern Occurrence
+- **Buy signals with Buy→Buy→Buy→Buy→Sell pattern:** 108 (8.77%)
+- **Buy signals with sell at higher price:** 82 (6.66%)
+- **Success rate (when pattern exists):** 75.93%
+
+### Second Buy vs First Buy
+- **Average % change:** -0.0683% (slightly lower)
+- **Median % change:** -0.0500% (slightly lower)
+- **Range:** -0.68% to +1.48%
+- **Second buy higher than first:** 30 (27.78%)
+- **Second buy lower than first:** 78 (72.22%)
+- **Second buy same as first:** 0 (0.00%)
+
+### Third Buy vs First Buy
+- **Average % change:** -0.1079% (lower)
+- **Median % change:** -0.0695% (lower)
+- **Range:** -1.21% to +1.95%
+- **Third buy higher than first:** 32 (29.63%)
+- **Third buy lower than first:** 76 (70.37%)
+
+### Fourth Buy vs First Buy
+- **Average % change:** -0.0964% (slightly lower)
+- **Median % change:** -0.0702% (slightly lower)
+- **Range:** -3.20% to +2.63%
+- **Fourth buy higher than first:** 41 (37.96%)
+- **Fourth buy lower than first:** 67 (62.04%)
+
+### Profit Statistics (Sell vs First Buy)
+- **Average % increase:** 0.47%
+- **Median % increase:** 0.28%
+- **Min % increase:** 0.0045%
+- **Max % increase:** 2.97%
+- **Std Dev:** 0.55%
+
+### Detailed Statistics
+| Metric | Value |
+|--------|-------|
+| Mean % | 0.4669% |
+| Median % | 0.2836% |
+| Min % | 0.0045% |
+| Max % | 2.9673% |
+| Std Dev % | 0.5503% |
+| 25th Percentile % | 0.1268% |
+| 75th Percentile % | 0.5973% |
+
+### Additional Buy Analysis (Profitable Patterns Only)
+- **Second Buy Average % change:** -0.07%
+- **Second Buy Median % change:** -0.05%
+- **Third Buy Average % change:** -0.07%
+- **Third Buy Median % change:** -0.06%
+- **Fourth Buy Average % change:** +0.07%
+- **Fourth Buy Median % change:** -0.02%
+
+### Duration to Profit
+- **Mean Duration:** 1,337.27 minutes (22.29 hours)
+- **Median Duration:** 1,203.73 minutes (20.06 hours)
+- **Min Duration:** 78.98 minutes (1.32 hours)
+- **Max Duration:** 5,504.53 minutes (91.74 hours)
+- **25th Percentile:** 264.96 minutes (4.42 hours)
+- **75th Percentile:** 1,263.92 minutes (21.07 hours)
+
+**For profitable patterns:**
+- **Mean Duration:** 1,250.50 minutes (20.84 hours)
+- **Median Duration:** 1,192.47 minutes (19.87 hours)
+
+### Duration Distribution
+| Duration Range | Count | Percentage |
+|----------------|-------|------------|
+| 0-15 min | 0 | 0.00% |
+| 15-30 min | 0 | 0.00% |
+| 30-60 min | 0 | 0.00% |
+| 1-2 hours | 4 | 3.70% |
+| 2-4 hours | 22 | 20.37% |
+| 4-8 hours | 5 | 4.63% |
+| 8+ hours | 77 | 71.30% |
+
+**Key Insight:** **71.3% of Pattern 4 profitable cases take 8+ hours**, indicating most span multiple trading days.
+
+---
+
 ## Profit Duration Analysis
 
 ### Overall Statistics (All 515 Profitable Cases)
@@ -213,6 +299,19 @@ This report analyzes buy signals and their profitability across three distinct p
 | Mean Profit | 0.49% |
 | Median Profit | 0.30% |
 
+#### Pattern 4: Buy → Buy → Buy → Buy → Sell (82 cases)
+| Metric | Value |
+|--------|-------|
+| Mean Duration | 1,337.27 minutes (22.29 hours) |
+| Median Duration | 1,203.73 minutes (20.06 hours) |
+| Min Duration | 78.98 minutes |
+| Max Duration | 5,504.53 minutes (91.74 hours) |
+| Std Dev | 1,263.76 minutes |
+| 25th Percentile | 264.96 minutes |
+| 75th Percentile | 1,263.92 minutes (21.07 hours) |
+| Mean Profit | 0.47% |
+| Median Profit | 0.28% |
+
 ---
 
 ## Duration Distribution
@@ -272,6 +371,19 @@ This report analyzes buy signals and their profitability across three distinct p
 
 **Key Insight:** **Nearly half (47.5%) of Pattern 3 profitable cases take 8+ hours.**
 
+#### Pattern 4: Buy → Buy → Buy → Buy → Sell
+| Duration Range | Count | Percentage |
+|----------------|-------|------------|
+| 0-15 min | 0 | 0.00% |
+| 15-30 min | 0 | 0.00% |
+| 30-60 min | 0 | 0.00% |
+| 1-2 hours | 4 | 3.70% |
+| 2-4 hours | 22 | 20.37% |
+| 4-8 hours | 5 | 4.63% |
+| 8+ hours | 77 | 71.30% |
+
+**Key Insight:** **71.3% of Pattern 4 profitable cases take 8+ hours**, making it the longest-duration pattern.
+
 ---
 
 ## Summary Table
@@ -281,6 +393,7 @@ This report analyzes buy signals and their profitability across three distinct p
 | Buy→Sell | 267 | 267.23 | 42.15 | 2.00 | 5,399.30 | 0.3129% | 0.1991% |
 | Buy→Buy→Sell | 147 | 763.24 | 140.00 | 11.00 | 4,060.32 | 0.4621% | 0.2959% |
 | Buy→Buy→Buy→Sell | 101 | 896.97 | 246.00 | 40.05 | 4,116.03 | 0.4885% | 0.2974% |
+| Buy→Buy→Buy→Buy→Sell | 82 | 1,337.27 | 1,203.73 | 78.98 | 5,504.53 | 0.4669% | 0.2836% |
 
 ---
 
@@ -294,14 +407,16 @@ This report analyzes buy signals and their profitability across three distinct p
 ### Duration
 1. **Median time to profit is ~1.3 hours** overall, but varies significantly by pattern
 2. **Pattern 1 is fastest:** Median of 42 minutes, with 64% occurring within 1 hour
-3. **Patterns with more buys take longer:** Median durations increase from 42 min → 140 min → 246 min
-4. **~60% of profitable cases occur within 2 hours** of the initial buy signal
-5. **~28% of cases take 8+ hours**, likely spanning multiple trading days
+3. **Patterns with more buys take longer:** Median durations increase from 42 min → 140 min → 246 min → 1,204 min (20 hours)
+4. **~60% of profitable cases occur within 2 hours** of the initial buy signal (Patterns 1-3)
+5. **~28% of cases take 8+ hours** (Patterns 1-3), with Pattern 4 having 71% taking 8+ hours
+6. **Pattern 4 has the longest duration:** Median of 20 hours, indicating most profitable cases span multiple trading days
 
 ### Price Movement
-1. **Second and third buys are often slightly lower** than the first buy (median around -0.02% to -0.04%)
+1. **Second, third, and fourth buys are often slightly lower** than the first buy (median around -0.02% to -0.07%)
 2. **Even with lower subsequent buys**, the patterns remain profitable in most cases
 3. **The sell signal typically occurs at a higher price** than the first buy, regardless of intermediate buy prices
+4. **Pattern 4 shows the most consistent downward trend** in subsequent buy prices, yet still maintains 75.93% profitability
 
 ---
 
@@ -312,8 +427,9 @@ This report analyzes buy signals and their profitability across three distinct p
 2. **Time to Profit:** The median time to realize profit is **1.3 hours**, with the fastest pattern (Buy→Sell) having a median of **42 minutes**.
 
 3. **Pattern Selection:** 
-   - For **faster profits**: Pattern 1 (Buy→Sell) offers the quickest turnaround
-   - For **higher profits**: Patterns 2 and 3 offer slightly better average returns (0.46-0.49% vs 0.31%)
+   - For **faster profits**: Pattern 1 (Buy→Sell) offers the quickest turnaround (median 42 minutes)
+   - For **higher profits**: Patterns 2, 3, and 4 offer similar average returns (0.46-0.49% vs 0.31%)
+   - For **longer-term positions**: Pattern 4 requires patience (median 20 hours) but maintains good profitability
 
 4. **Risk Consideration:** Approximately **58.2% of buy signals** do not result in profitable sell opportunities within the next 3 signals, indicating the importance of risk management and position sizing.
 
@@ -325,6 +441,7 @@ The following CSV files contain detailed results for further analysis:
 - `buy_sell_confidence_analysis.csv` - Detailed buy signal confidence analysis
 - `buy_buy_sell_pattern_analysis.csv` - Buy→Buy→Sell pattern analysis
 - `buy_buy_buy_sell_pattern_analysis.csv` - Buy→Buy→Buy→Sell pattern analysis
+- `buy_buy_buy_buy_sell_pattern_analysis.csv` - Buy→Buy→Buy→Buy→Sell pattern analysis
 - `profit_duration_analysis.csv` - Duration analysis for all profitable cases
 
 ---
@@ -335,6 +452,7 @@ The following Python scripts were used to generate this analysis:
 - `analyze_buy_sell_confidence.py` - Analyzes immediate sell signals after buy signals
 - `analyze_buy_buy_sell_pattern.py` - Analyzes Buy→Buy→Sell patterns
 - `analyze_buy_buy_buy_sell_pattern.py` - Analyzes Buy→Buy→Buy→Sell patterns
+- `analyze_buy_buy_buy_buy_sell_pattern.py` - Analyzes Buy→Buy→Buy→Buy→Sell patterns
 - `analyze_profit_duration.py` - Analyzes duration to profit for all profitable cases
 
 ---
