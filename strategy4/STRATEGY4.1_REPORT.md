@@ -21,19 +21,20 @@ Strategy 4.1 is an enhanced version of Strategy 4 that modifies the exit strateg
 
 #### Equity Curve Comparison
 
-The following chart shows the equity curves for all four strategies side-by-side:
+The following chart shows all four equity curves overlaid in a single graph for direct comparison:
 
 ![Equity Curve Comparison](equity_curve_comparison.png)
 
 **Key Observations:**
-- Strategy 4.1 achieves the highest final portfolio value ($10,976.42)
-- Strategy 2 shows steady growth with no drawdowns
-- Strategy 3 shows more volatility with stop-loss protection
-- Strategy 4 demonstrates progressive exit benefits
+- Strategy 4.1 achieves the highest final portfolio value ($10,976.42) - green line
+- Strategy 2 shows steady growth with no drawdowns - blue line
+- Strategy 3 shows more volatility with stop-loss protection - purple line
+- Strategy 4 demonstrates progressive exit benefits - orange line
+- The overlay format makes it easy to compare performance trajectories at a glance
 
 #### Daily P&L Comparison
 
-The following chart compares daily P&L across all strategies:
+The following chart compares daily P&L across all strategies (all plots use the same y-axis range for fair comparison):
 
 ![Daily P&L Comparison](daily_pnl_comparison.png)
 
@@ -42,6 +43,7 @@ The following chart compares daily P&L across all strategies:
 - Strategy 2 has no losing days (perfect win rate)
 - Strategy 4.1 shows balanced winning/losing day distribution
 - All strategies show positive overall performance
+- The uniform y-axis range allows direct visual comparison of daily P&L magnitudes across strategies
 
 ### Overall Performance
 - **Initial Capital**: $10,000.00

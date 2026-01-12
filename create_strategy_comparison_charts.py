@@ -107,30 +107,36 @@ for strategy_name, config in STRATEGIES.items():
 if len(strategy_data) == 4:
     print("\nGenerating comparison charts...")
     
-    # 1. Equity Curve Comparison (2x2 grid)
-    fig, axes = plt.subplots(2, 2, figsize=(20, 14))
+    # 1. Equity Curve Comparison (Overlay - all 4 lines in one graph)
+    fig, ax = plt.subplots(figsize=(16, 10))
     fig.suptitle('Equity Curve Comparison: Strategies 2, 3, 4, and 4.1', fontsize=16, fontweight='bold')
     
     strategy_order = ['Strategy 2', 'Strategy 3', 'Strategy 4', 'Strategy 4.1']
-    for idx, strategy_name in enumerate(strategy_order):
+    
+    # Find global min/max for y-axis
+    all_equities = []
+    for strategy_name in strategy_order:
         if strategy_name in strategy_data:
-            row = idx // 2
-            col = idx % 2
-            ax = axes[row, col]
+            all_equities.extend(strategy_data[strategy_name]['equity'])
+    
+    global_min_equity = min(all_equities)
+    global_max_equity = max(all_equities)
+    
+    # Plot all strategies on the same graph
+    for strategy_name in strategy_order:
+        if strategy_name in strategy_data:
             data = strategy_data[strategy_name]
-            
             ax.plot(range(len(trading_days)), data['equity'], 
                     linewidth=2.5, color=data['color'], marker='o', markersize=2, 
-                    label=f"{strategy_name} (Final: ${data['equity'][-1]:,.2f})")
-            ax.axhline(y=INITIAL_CAPITAL, color='gray', linestyle='--', linewidth=1, alpha=0.5, label='Initial Capital')
-            ax.set_xlabel('Trading Day', fontsize=11)
-            ax.set_ylabel('Portfolio Value ($)', fontsize=11)
-            ax.set_title(f'{strategy_name} Equity Curve', fontsize=12, fontweight='bold')
-            ax.grid(True, alpha=0.3)
-            ax.legend(fontsize=9)
-            min_equity = min(data['equity'])
-            max_equity = max(data['equity'])
-            ax.set_ylim([min(INITIAL_CAPITAL * 0.98, min_equity * 0.99), max_equity * 1.01])
+                    label=f"{strategy_name} (Final: ${data['equity'][-1]:,.2f})", alpha=0.9)
+    
+    ax.axhline(y=INITIAL_CAPITAL, color='gray', linestyle='--', linewidth=1.5, alpha=0.6, label='Initial Capital')
+    ax.set_xlabel('Trading Day', fontsize=12)
+    ax.set_ylabel('Portfolio Value ($)', fontsize=12)
+    ax.set_title('Equity Curve Comparison: All Strategies Overlaid', fontsize=14, fontweight='bold')
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=10, loc='best')
+    ax.set_ylim([min(INITIAL_CAPITAL * 0.98, global_min_equity * 0.99), global_max_equity * 1.01])
     
     plt.tight_layout()
     equity_comparison_path = os.path.join(SCRIPT_DIR, 'strategy4', 'equity_curve_comparison.png')
@@ -138,9 +144,22 @@ if len(strategy_data) == 4:
     print(f"[OK] Saved: {equity_comparison_path}")
     plt.close()
     
-    # 2. Daily P&L Comparison (2x2 grid)
+    # 2. Daily P&L Comparison (2x2 grid with same y-axis range)
     fig, axes = plt.subplots(2, 2, figsize=(20, 14))
     fig.suptitle('Daily P&L Comparison: Strategies 2, 3, 4, and 4.1', fontsize=16, fontweight='bold')
+    
+    # Find global min/max for y-axis (same range for all plots)
+    all_pnl_values = []
+    for strategy_name in strategy_order:
+        if strategy_name in strategy_data:
+            all_pnl_values.extend(strategy_data[strategy_name]['daily_pnl'])
+    
+    global_min_pnl = min(all_pnl_values)
+    global_max_pnl = max(all_pnl_values)
+    # Add some padding
+    y_range_padding = (global_max_pnl - global_min_pnl) * 0.1
+    y_min = global_min_pnl - y_range_padding
+    y_max = global_max_pnl + y_range_padding
     
     for idx, strategy_name in enumerate(strategy_order):
         if strategy_name in strategy_data:
@@ -158,6 +177,8 @@ if len(strategy_data) == 4:
             total_pnl = sum(data['daily_pnl'])
             ax.set_title(f'{strategy_name} Daily P&L (Total: ${total_pnl:,.2f})', fontsize=12, fontweight='bold')
             ax.grid(True, alpha=0.3, axis='y')
+            # Set same y-axis range for all plots
+            ax.set_ylim([y_min, y_max])
             
             # Add statistics text
             winning_days = sum(1 for pnl in data['daily_pnl'] if pnl > 0)
