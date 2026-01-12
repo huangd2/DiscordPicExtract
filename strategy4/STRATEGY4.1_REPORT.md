@@ -89,6 +89,13 @@ The following chart compares daily P&L across all strategies:
 5. **Better Win Rate**: 89.0% vs 88.0% (+1.0%)
 6. **Fewer Big Losing Days**: 5 vs 6 (-16.7%)
 
+### Visual Evidence
+
+The comparison charts above clearly demonstrate Strategy 4.1's superior performance:
+- **Equity Curve**: Shows the steepest upward trajectory, ending at the highest portfolio value
+- **Daily P&L**: Demonstrates consistent positive performance with the highest cumulative P&L
+- **Risk-Adjusted Returns**: Better balance between profit capture and risk management compared to other strategies
+
 ## Strategy Characteristics
 
 ### Position Management
