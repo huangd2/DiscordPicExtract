@@ -107,22 +107,13 @@ for strategy_name, config in STRATEGIES.items():
 if len(strategy_data) == 4:
     print("\nGenerating comparison charts...")
     
-    # 1. Equity Curve Comparison (Overlay - all 4 lines in one graph)
+    # 1. Equity Curve Comparison (ONE plot with 4 lines overlaid)
     fig, ax = plt.subplots(figsize=(16, 10))
     fig.suptitle('Equity Curve Comparison: Strategies 2, 3, 4, and 4.1', fontsize=16, fontweight='bold')
     
     strategy_order = ['Strategy 2', 'Strategy 3', 'Strategy 4', 'Strategy 4.1']
     
-    # Find global min/max for y-axis
-    all_equities = []
-    for strategy_name in strategy_order:
-        if strategy_name in strategy_data:
-            all_equities.extend(strategy_data[strategy_name]['equity'])
-    
-    global_min_equity = min(all_equities)
-    global_max_equity = max(all_equities)
-    
-    # Plot all strategies on the same graph
+    # Plot all strategies on the same graph (overlay)
     for strategy_name in strategy_order:
         if strategy_name in strategy_data:
             data = strategy_data[strategy_name]
@@ -136,6 +127,14 @@ if len(strategy_data) == 4:
     ax.set_title('Equity Curve Comparison: All Strategies Overlaid', fontsize=14, fontweight='bold')
     ax.grid(True, alpha=0.3)
     ax.legend(fontsize=10, loc='best')
+    
+    # Find global min/max for y-axis
+    all_equities = []
+    for strategy_name in strategy_order:
+        if strategy_name in strategy_data:
+            all_equities.extend(strategy_data[strategy_name]['equity'])
+    global_min_equity = min(all_equities)
+    global_max_equity = max(all_equities)
     ax.set_ylim([min(INITIAL_CAPITAL * 0.98, global_min_equity * 0.99), global_max_equity * 1.01])
     
     plt.tight_layout()
@@ -144,22 +143,13 @@ if len(strategy_data) == 4:
     print(f"[OK] Saved: {equity_comparison_path}")
     plt.close()
     
-    # 2. Daily P&L Comparison (2x2 grid with same y-axis range)
+    # 2. Daily P&L Comparison (2x2 grid with same y-axis range: -120 to 170)
     fig, axes = plt.subplots(2, 2, figsize=(20, 14))
     fig.suptitle('Daily P&L Comparison: Strategies 2, 3, 4, and 4.1', fontsize=16, fontweight='bold')
     
-    # Find global min/max for y-axis (same range for all plots)
-    all_pnl_values = []
-    for strategy_name in strategy_order:
-        if strategy_name in strategy_data:
-            all_pnl_values.extend(strategy_data[strategy_name]['daily_pnl'])
-    
-    global_min_pnl = min(all_pnl_values)
-    global_max_pnl = max(all_pnl_values)
-    # Add some padding
-    y_range_padding = (global_max_pnl - global_min_pnl) * 0.1
-    y_min = global_min_pnl - y_range_padding
-    y_max = global_max_pnl + y_range_padding
+    # Fixed y-axis range for all plots
+    y_min = -120
+    y_max = 170
     
     for idx, strategy_name in enumerate(strategy_order):
         if strategy_name in strategy_data:
@@ -177,7 +167,7 @@ if len(strategy_data) == 4:
             total_pnl = sum(data['daily_pnl'])
             ax.set_title(f'{strategy_name} Daily P&L (Total: ${total_pnl:,.2f})', fontsize=12, fontweight='bold')
             ax.grid(True, alpha=0.3, axis='y')
-            # Set same y-axis range for all plots
+            # Set same y-axis range for all plots: -120 to 170
             ax.set_ylim([y_min, y_max])
             
             # Add statistics text
