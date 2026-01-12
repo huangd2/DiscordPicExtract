@@ -17,6 +17,32 @@ Strategy 4.1 is an enhanced version of Strategy 4 that modifies the exit strateg
 
 ## Performance Results
 
+### Visual Comparison
+
+#### Equity Curve Comparison
+
+The following chart shows the equity curves for all four strategies side-by-side:
+
+![Equity Curve Comparison](equity_curve_comparison.png)
+
+**Key Observations:**
+- Strategy 4.1 achieves the highest final portfolio value ($10,976.42)
+- Strategy 2 shows steady growth with no drawdowns
+- Strategy 3 shows more volatility with stop-loss protection
+- Strategy 4 demonstrates progressive exit benefits
+
+#### Daily P&L Comparison
+
+The following chart compares daily P&L across all strategies:
+
+![Daily P&L Comparison](daily_pnl_comparison.png)
+
+**Key Observations:**
+- Strategy 4.1 has the highest total daily P&L ($976.48)
+- Strategy 2 has no losing days (perfect win rate)
+- Strategy 4.1 shows balanced winning/losing day distribution
+- All strategies show positive overall performance
+
 ### Overall Performance
 - **Initial Capital**: $10,000.00
 - **Final Portfolio Value**: $10,976.42
