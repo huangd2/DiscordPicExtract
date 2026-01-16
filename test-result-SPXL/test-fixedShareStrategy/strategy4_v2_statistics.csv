@@ -1,0 +1,45 @@
+Metric,Value
+Initial Capital,"$10,000.00"
+Final Portfolio Value,"$10,760.06"
+Total P&L,$760.06
+Return (%),7.60
+Total Trading Days,207
+Days with Zero Position at End,106
+Days with Position at End,101
+Days with Position Crossing to Next Day,97
+Total Trades Executed,183
+Winning Trades,115
+Losing Trades,68
+Win Rate (%),62.8
+Stop-Loss Triggered,93
+Stop-Loss Rate (%),50.8
+Average P&L per Trade,$4.15
+Average Winning Trade,$5.02
+Average Losing Trade,$-12.34
+Average Stop-Loss Trade,$-8.04
+Total Cross-Day Trades,89
+Cross-Day Wins,60
+Cross-Day Losses,29
+Cross-Day Win Rate (%),67.4
+Cross-Day Total P&L,$-19.41
+Min Trades per Day,1
+Max Trades per Day,8
+Average Trades per Day,2.70
+Days with No Trades,45
+Days with No Trades (%),21.7
+Total Days,207
+Winning Days,127
+Winning Days (%),61.4
+Losing Days,34
+Losing Days (%),16.4
+Zero P&L Days,46
+Zero P&L Days (%),22.2
+Min Winning Day P&L,$0.12
+Max Winning Day P&L,$146.76
+Mean Winning Day P&L,$11.67
+Median Winning Day P&L,$6.29
+Min Losing Day P&L,$-65.63
+Max Losing Day P&L,$-4.06
+Mean Losing Day P&L,$-21.16
+Median Losing Day P&L,$-18.93
+Big Losing Days (Loss > $50),1
